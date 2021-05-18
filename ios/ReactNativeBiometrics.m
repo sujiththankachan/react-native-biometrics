@@ -161,9 +161,10 @@ RCT_EXPORT_METHOD(simplePrompt: (NSDictionary *)params resolver:(RCTPromiseResol
     NSString *promptMessage = [RCTConvert NSString:params[@"promptMessage"]];
 
     LAContext *context = [[LAContext alloc] init];
-    context.localizedFallbackTitle = @"";
-
-    [context evaluatePolicy:LAPolicyDeviceOwnerAuthenticationWithBiometrics localizedReason:promptMessage reply:^(BOOL success, NSError *biometricError) {
+    // Fix added for passcode fallback for iOS
+    // Changed `LAPolicyDeviceOwnerAuthenticationWithBiometrics` to `LAPolicyDeviceOwnerAuthentication`
+    // Removed `context.localizedFallbackTitle = @"";`
+    [context evaluatePolicy:LAPolicyDeviceOwnerAuthentication localizedReason:promptMessage reply:^(BOOL success, NSError *biometricError) {
       if (success) {
         NSDictionary *result = @{
           @"success": @(YES)
